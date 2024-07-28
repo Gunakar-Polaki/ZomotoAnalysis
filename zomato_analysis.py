@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 # Load data
 dataframe = pd.read_csv("Zomato data .csv")
-
+st.set_option('deprecation.showPyplotGlobalUse', False)
 # Function to handle rate column
 def handleRate(value):
     value = str(value).split('/')
