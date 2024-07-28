@@ -82,7 +82,6 @@ if 'Heatmap of listed_in(type) and online_order' in options:
     st.subheader('Heatmap of listed_in(type) and online_order')
     pivot_table = dataframe.pivot_table(index='listed_in(type)', columns='online_order', aggfunc='size', fill_value=0)
     fig, ax = plt.subplots()
-    sns.heatmap(pivot_table, annot=True, cmap="YlGnBu", fmt='d', ax=ax)
     ax.set_title("Heatmap")
     ax.set_xlabel("Online Order")
     ax.set_ylabel("Listed In (Type)")
