@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import seaborn as sns
 import matplotlib.pyplot as plt
 
 # Load data
@@ -25,31 +24,35 @@ options = st.sidebar.multiselect(
      'Preferred by a larger number of individuals', 
      'Restaurant with maximum votes', 
      'Explore online_order column', 
-     'Explore rate column']
+     'Explore rate column',
+     'Compare online and offline order ratings',
+     'Heatmap of listed_in(type) and online_order']
 )
 
 # Explore listed_in (type) column
 if 'Explore listed_in (type) column' in options:
-    st.subheader('Explore by Type of Restaurant ')
-    fig, ax = plt.subplots()
-    sns.countplot(x=dataframe['listed_in(type)'], ax=ax)
-    ax.set_xlabel("Type of restaurant")
-    st.pyplot(fig)
+    st.subheader('Explore by Type of Restaurant')
+    plt.figure(figsize=(10, 6))
+    dataframe['listed_in(type)'].value_counts().plot(kind='bar')
+    plt.xlabel("Type of restaurant")
+    plt.ylabel("Count")
+    plt.title("Number of Restaurants by Type")
+    st.pyplot()
 
 # Preferred by a larger number of individuals
 if 'Preferred by a larger number of individuals' in options:
-    st.subheader('Preferred by a larger number of individuals')
+    st.subheader('Preferred by a Larger Number of Individuals')
+    plt.figure(figsize=(10, 6))
     grouped_data = dataframe.groupby('listed_in(type)')['votes'].sum()
-    result = pd.DataFrame({'votes': grouped_data})
-    fig, ax = plt.subplots()
-    ax.plot(result, c="green", marker="o")
-    ax.set_xlabel("Type of restaurant", c="red", size=20)
-    ax.set_ylabel("Votes", c="red", size=20)
-    st.pyplot(fig)
+    grouped_data.plot(kind='line', marker='o', color='green')
+    plt.xlabel("Type of restaurant")
+    plt.ylabel("Votes")
+    plt.title("Total Votes by Restaurant Type")
+    st.pyplot()
 
 # Restaurant with maximum votes
 if 'Restaurant with maximum votes' in options:
-    st.subheader('Restaurant with maximum votes')
+    st.subheader('Restaurant with Maximum Votes')
     max_votes = dataframe['votes'].max()
     restaurant_with_max_votes = dataframe.loc[dataframe['votes'] == max_votes, 'name']
     st.write("Restaurant(s) with the maximum votes:")
@@ -57,32 +60,45 @@ if 'Restaurant with maximum votes' in options:
 
 # Explore online_order column
 if 'Explore online_order column' in options:
-    st.subheader('Explore online orders ')
-    fig, ax = plt.subplots()
-    sns.countplot(x=dataframe['online_order'], ax=ax)
-    st.pyplot(fig)
+    st.subheader('Explore Online Orders')
+    plt.figure(figsize=(10, 6))
+    dataframe['online_order'].value_counts().plot(kind='bar')
+    plt.xlabel("Online Order")
+    plt.ylabel("Count")
+    plt.title("Number of Restaurants with Online Orders")
+    st.pyplot()
 
 # Explore rate column
 if 'Explore rate column' in options:
-    st.subheader('Explore by ratings ')
-    fig, ax = plt.subplots()
-    ax.hist(dataframe['rate'], bins=5)
-    ax.set_title("Ratings Distribution")
-    st.pyplot(fig)
+    st.subheader('Explore by Ratings')
+    plt.figure(figsize=(10, 6))
+    plt.hist(dataframe['rate'], bins=5, edgecolor='black')
+    plt.xlabel("Rating")
+    plt.ylabel("Frequency")
+    plt.title("Distribution of Ratings")
+    st.pyplot()
 
-# Examine whether online orders receive higher ratings
+# Compare online and offline order ratings
 if 'Compare online and offline order ratings' in options:
-    st.subheader('Compare online and offline order ratings')
-    fig, ax = plt.subplots()
-    sns.boxplot(x='online_order', y='rate', data=dataframe, ax=ax)
-    st.pyplot(fig)
+    st.subheader('Compare Online and Offline Order Ratings')
+    plt.figure(figsize=(10, 6))
+    dataframe.boxplot(column='rate', by='online_order')
+    plt.xlabel("Online Order")
+    plt.ylabel("Rating")
+    plt.title("Ratings by Online Order")
+    plt.suptitle("")  # Suppress the default title
+    st.pyplot()
 
 # Heatmap for listed_in(type) and online_order
 if 'Heatmap of listed_in(type) and online_order' in options:
-    st.subheader('Heatmap of listed_in(type) and online_order')
+    st.subheader('Heatmap of Listed In (Type) and Online Order')
     pivot_table = dataframe.pivot_table(index='listed_in(type)', columns='online_order', aggfunc='size', fill_value=0)
-    fig, ax = plt.subplots()
-    ax.set_title("Heatmap")
-    ax.set_xlabel("Online Order")
-    ax.set_ylabel("Listed In (Type)")
-    st.pyplot(fig)
+    plt.figure(figsize=(12, 8))
+    plt.imshow(pivot_table, cmap='YlGnBu', interpolation='nearest')
+    plt.colorbar(label='Count')
+    plt.xticks(ticks=range(len(pivot_table.columns)), labels=pivot_table.columns)
+    plt.yticks(ticks=range(len(pivot_table.index)), labels=pivot_table.index)
+    plt.xlabel("Online Order")
+    plt.ylabel("Listed In (Type)")
+    plt.title("Heatmap of Restaurant Types and Online Orders")
+    st.pyplot()
