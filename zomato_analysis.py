@@ -24,7 +24,7 @@ options = st.sidebar.multiselect(
      'Preferred by a larger number of individuals', 
      'Restaurant with maximum votes', 
      'Explore online_order column', 
-     'Explore rate column',
+     'Explore ratings',
      'Compare online and offline order ratings',
      'Heatmap of listed_in(type) and online_order']
 )
@@ -69,7 +69,7 @@ if 'Explore online_order column' in options:
     st.pyplot()
 
 # Explore rate column
-if 'Explore rate column' in options:
+if 'Explore ratings' in options:
     st.subheader('Explore by Ratings')
     plt.figure(figsize=(10, 6))
     plt.hist(dataframe['rate'], bins=5, edgecolor='black')
